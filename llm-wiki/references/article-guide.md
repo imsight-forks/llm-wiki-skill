@@ -37,13 +37,13 @@ If a concept page **would** exceed ~1200 words, do not write it as a single file
 
    ## Sub-pages
 
-   - [[<Topic>/<aspect-1>]] — <one-line summary>
-   - [[<Topic>/<aspect-2>]] — <one-line summary>
+   - [[wiki/concepts/<topic>/<aspect-1>|<Aspect 1>]] — <one-line summary>
+   - [[wiki/concepts/<topic>/<aspect-2>|<Aspect 2>]] — <one-line summary>
    - ...
 
    ## Sources
 
-   - [[summaries/...]]
+   - [[wiki/summaries/<source-slug>|<Source Title>]]
    ```
 3. Write each `<aspect-N>.md` as a focused 400–1200 word page.
 4. Update `wiki/index.md` to show the hierarchy with indented bullets under the folder-split entry.
@@ -89,8 +89,8 @@ flowchart LR
 
 ## Relationship to other concepts
 
-- [[Related Concept A]] — how they relate
-- [[Related Concept B]] — contrast or connection
+- [[wiki/concepts/related-concept-a|Related Concept A]] — how they relate
+- [[wiki/concepts/related-concept-b|Related Concept B]] — contrast or connection
 
 ## Open questions
 
@@ -98,8 +98,8 @@ flowchart LR
 
 ## Sources
 
-- [[summaries/source-slug-1]] — (date) one-line description
-- [[summaries/source-slug-2]] — (date) one-line description
+- [[wiki/summaries/source-slug-1|Source 1]] — (date) one-line description
+- [[wiki/summaries/source-slug-2|Source 2]] — (date) one-line description
 ```
 
 ## Entity page structure
@@ -125,11 +125,11 @@ tags: [tag1]
 
 ## Related concepts
 
-- [[Concept A]] — connection
+- [[wiki/concepts/concept-a|Concept A]] — connection
 
 ## Sources
 
-- [[summaries/source-slug]]
+- [[wiki/summaries/source-slug|Source]]
 ```
 
 ## Summary page structure
@@ -167,8 +167,8 @@ tags: [tag1]
 
 ## Concepts introduced / referenced
 
-- [[Concept A]]
-- [[Entity B]]
+- [[wiki/concepts/concept-a|Concept A]]
+- [[wiki/entities/entity-b|Entity B]]
 ```
 
 ## Diagrams — always mermaid
@@ -222,11 +222,12 @@ The web viewer renders math server-side with KaTeX. Obsidian renders it natively
 
 ## Wikilink rules
 
-1. **Link first mention** of every entity or concept — don't wait for "a natural place".
-2. **Link maximum twice per article** — don't over-link the same page.
-3. **Link concepts that exist** — check `wiki/index.md` before creating a new link target.
-4. **For folder-split pages**, link the index with an alias: `[[concepts/Foo/index|Foo]]`.
-5. **Backlink audit** — after writing a new article, grep existing articles for the new page's title and add incoming links.
+1. **Use vault-root targets** with short aliases, for example `[[wiki/concepts/tensor-memory-accelerator|Tensor Memory Accelerator]]`.
+2. **Link first mention** of every entity or concept — don't wait for "a natural place".
+3. **Link maximum twice per article** — don't over-link the same page.
+4. **Link concepts that exist** — check `wiki/index.md` before creating a new link target.
+5. **For folder-split pages**, link the index with an alias: `[[wiki/concepts/foo/index|Foo]]`.
+6. **Backlink audit** — after writing a new article, grep existing articles for the new page's title and add incoming links.
 
 ## Handling contradictions between sources
 
@@ -238,7 +239,7 @@ When two sources contradict each other:
 4. Do NOT silently pick one — contradictions are valuable signal.
 
 Example:
-> Source A (2024) claims X. Source B (2026) claims Y, which contradicts A. It's unclear whether this reflects a methodological difference or an error in one source. See [[summaries/source-a]] and [[summaries/source-b]].
+> Source A (2024) claims X. Source B (2026) claims Y, which contradicts A. It's unclear whether this reflects a methodological difference or an error in one source. See [[wiki/summaries/source-a|Source A]] and [[wiki/summaries/source-b|Source B]].
 
 If a human later files an `audit` comment resolving the contradiction, update the article and move the audit to `audit/resolved/` with a resolution note.
 
@@ -252,4 +253,3 @@ When processing an open audit that targets an article you're editing:
 4. Add a line to the `# Resolution` section of the audit file explaining what changed.
 5. Move the audit file to `audit/resolved/`.
 6. Log the resolution under the current day's `log/YYYYMMDD.md`.
-

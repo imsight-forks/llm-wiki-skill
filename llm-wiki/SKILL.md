@@ -56,6 +56,7 @@ A single concept page should **never** try to cover a complex topic end-to-end. 
 - Put a short index page at `wiki/concepts/<topic>/index.md` — definition, list of sub-pages, one-line summaries
 - Put each aspect in its own file: `wiki/concepts/<topic>/<aspect>.md`
 - In `wiki/index.md`, show the hierarchy via indented bullets
+- Wikilinks use vault-root targets with short aliases, for example `[[wiki/concepts/<topic>/index|<Topic>]]` and `[[wiki/concepts/<topic>/<aspect>|<Aspect>]]`.
 
 Example layout (from a real wiki):
 ```
@@ -160,7 +161,7 @@ Answer a question **grounded in the wiki**, not general knowledge.
 1. Read `wiki/index.md`. Scan for relevant pages by category.
 2. Read the identified pages in full; follow one level of wikilinks.
 3. If the wiki doesn't have enough material, say so and suggest what to ingest next instead of making something up.
-4. Synthesize the answer, citing pages inline with `[[Page Name]]`.
+4. Synthesize the answer, citing pages inline with canonical links such as `[[wiki/concepts/page-slug|Page Name]]`.
 5. Save to `outputs/queries/<YYYY-MM-DD>-<question-slug>.md`.
 6. If the answer is durable (a comparison, analysis, or new synthesis) → promote a cleaned-up version to `wiki/concepts/`, add to `index.md`.
 7. Log: `## [HH:MM] query | <question-slug>` (and a separate `## [HH:MM] promote | ...` line if promoted).
@@ -181,6 +182,7 @@ The script reports:
 - **log/ shape** — stray files or wrong filenames in `log/`
 - **audit/ shape** — malformed YAML frontmatter in `audit/*.md`
 - **Audit target resolution** — every open audit's `target` file must exist
+- **Non-canonical wikilinks** — legacy `[[concepts/foo]]`-style links that should be rewritten to `[[wiki/concepts/foo|Foo]]`
 
 For each issue, propose a fix, confirm with the user, then apply. Log: `## [HH:MM] lint | <N> issues found, <M> fixed`.
 
@@ -258,19 +260,19 @@ The LLM rebuilds `index.md` on every compile and touches it on every ingest. For
 
 ## Concepts
 ### <Category A>
-- [[concepts/Foo]] — one-line summary
-- [[concepts/Bar/index|Bar]] — (folder-split) one-line summary
-    - [[concepts/Bar/aspect-1]] — ...
-    - [[concepts/Bar/aspect-2]] — ...
+- [[wiki/concepts/foo|Foo]] — one-line summary
+- [[wiki/concepts/bar/index|Bar]] — (folder-split) one-line summary
+    - [[wiki/concepts/bar/aspect-1|Aspect 1]] — ...
+    - [[wiki/concepts/bar/aspect-2|Aspect 2]] — ...
 
 ### <Category B>
 - ...
 
 ## Entities
-- [[entities/Andrej Karpathy]] — AI researcher, author of the llm-wiki pattern
+- [[wiki/entities/andrej-karpathy|Andrej Karpathy]] — AI researcher, author of the llm-wiki pattern
 
 ## Summaries (chronological)
-- 2026-04-09 — [[summaries/llm-wiki-gist]] — Karpathy's original Gist
+- 2026-04-09 — [[wiki/summaries/llm-wiki-gist|llm-wiki gist]] — Karpathy's original Gist
 
 ## Open Questions
 - Q1: ...
@@ -305,4 +307,4 @@ Quick grep across history: `grep -rh "^## \[" log/ | tail -20`.
 - `references/log-guide.md` — The `log/` folder convention
 - `references/audit-guide.md` — Audit file format, anchor strategy, processing workflow
 - `references/tooling-tips.md` — Obsidian setup, Web Clipper, qmd, plugin + web installation
-
+- `references/vault-root-link-resolver.md` — Canonical wikilink resolver contract and compatibility cases

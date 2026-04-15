@@ -8,7 +8,8 @@ Practical setup and usage notes for the LLM Wiki stack.
 
 1. **Attachment folder**: Settings → Files and links → "Attachment folder path" → `raw/assets/`.
 2. **New file location**: Settings → Files and links → "Default location for new notes" → `wiki/concepts/`.
-3. **Download attachments hotkey**: Settings → Hotkeys → search "Download attachments" → bind to `Ctrl+Shift+D`. After clipping an article, hit the hotkey to download all images locally.
+3. **New link format**: Settings → Files and links → "New link format" → absolute path in vault. `llm-wiki` canonical links use vault-root targets such as `[[wiki/concepts/foo|Foo]]`.
+4. **Download attachments hotkey**: Settings → Hotkeys → search "Download attachments" → bind to `Ctrl+Shift+D`. After clipping an article, hit the hotkey to download all images locally.
 
 ### Plugins to install
 
@@ -121,7 +122,7 @@ import matplotlib.pyplot as plt
 plt.savefig('outputs/charts/my-analysis.png')
 ```
 
-Embed in a wiki article: `![[my-analysis.png]]`.
+Embed in a wiki article: `![[outputs/charts/my-analysis.png]]`.
 
 ## Git workflow
 
@@ -141,4 +142,3 @@ Keep large files (PDFs >10 MB, raw images at full resolution, video, model weigh
 ## Interactive HTML outputs
 
 For complex analyses, the LLM can generate interactive HTML with JavaScript and save to `outputs/`. These can be opened in a browser or embedded in Obsidian with the HTML plugin.
-

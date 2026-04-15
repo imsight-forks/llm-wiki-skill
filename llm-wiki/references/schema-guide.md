@@ -37,8 +37,9 @@ Every operation appends an entry to `log/YYYYMMDD.md`.
 - **Summary pages** (`wiki/summaries/`): kebab-case source slug. E.g., "karpathy-llm-wiki-gist".
 
 ### Wikilinks
-- Always use `[[Page Title]]` — exact page title, case-sensitive.
-- For folder-split pages, link to the index: `[[concepts/Foo/index|Foo]]`.
+- Always use vault-root targets with short aliases: `[[wiki/concepts/page-slug|Page Title]]`.
+- For folder-split pages, link to the index: `[[wiki/concepts/foo/index|Foo]]`.
+- Link sibling vault directories directly, such as `[[raw/refs/source-pointer|source pointer]]`, `[[log/20260415#0012-ingest|ingest log]]`, and `[[outputs/queries/query-slug|query output]]`.
 - Link the first mention of every entity or concept. Do not link the same page more than twice per article.
 
 ### Frontmatter
@@ -65,15 +66,15 @@ tags: [relevant tags]
 ## Current articles
 
 ### Concepts
-- [[<Concept Title>]] — one-line summary
-- [[concepts/<Topic>/index|<Topic>]] — (folder-split) one-line summary
-    - [[<Topic>/<aspect-1>]] — ...
+- [[wiki/concepts/<concept-slug>|<Concept Title>]] — one-line summary
+- [[wiki/concepts/<topic>/index|<Topic>]] — (folder-split) one-line summary
+    - [[wiki/concepts/<topic>/<aspect-1>|<Aspect 1>]] — ...
 
 ### Entities
-- [[<Entity Name>]] — one-line summary
+- [[wiki/entities/<entity-slug>|<Entity Name>]] — one-line summary
 
 ### Summaries
-- [[summaries/<slug>]] — source title (date)
+- [[wiki/summaries/<slug>|<Source Title>]] — source title (date)
 
 ## Open research questions
 
@@ -116,4 +117,3 @@ Count of open audits per target (filled in after running `audit_review.py --open
 - After every lint pass: update "Research gaps".
 - After every audit pass: refresh the "Audit backlog" counts.
 - Monthly: review scope, prune stale research questions.
-

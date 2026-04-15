@@ -89,6 +89,7 @@ Every operation appends an entry to `log/YYYYMMDD.md`.
 - **Folder-split concepts** (`wiki/concepts/<topic>/`): used when a topic exceeds ~1200 words. Contains `index.md` + one file per aspect.
 - **Entity pages** (`wiki/entities/`): Proper names.
 - **Summary pages** (`wiki/summaries/`): kebab-case source slug.
+- **Wikilinks**: use vault-root targets with short aliases, e.g. `[[wiki/concepts/page-slug|Page Title]]`.
 
 All pages require YAML frontmatter: `title`, `type`, `created`, `updated`, `sources`, `tags`.
 
@@ -200,4 +201,3 @@ if __name__ == "__main__":
         print(__doc__)
         sys.exit(1)
     scaffold(sys.argv[1], sys.argv[2])
-
