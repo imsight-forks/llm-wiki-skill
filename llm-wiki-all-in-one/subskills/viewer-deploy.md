@@ -101,5 +101,5 @@ After launch, report:
 
 - Missing `node`/`npm`: ask the user to install Node.js with npm, or install bun and rerun with `--package-manager bun`.
 - Port busy: ask for another port and rerun with `--port <port>`.
-- Invalid wiki root: ask for the directory that contains `CLAUDE.md`, `wiki/`, `audit/`, `log/`, `raw/`, and `outputs/`.
+- Invalid wiki root: ask for the directory that contains `README.md`, `wiki/`, `audit/`, `log/`, `raw/`, and `outputs/`.
 - Install failure: report the failed command and leave the copied source in place so the user can inspect it.

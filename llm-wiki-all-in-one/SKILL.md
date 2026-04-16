@@ -25,7 +25,7 @@ Instead of RAG (re-retrieving raw docs on every query), the LLM **compiles** raw
 - **You** own: sourcing raw material, asking good questions, steering direction, filing feedback on anything the AI got wrong.
 - **LLM** owns: all writing, cross-referencing, filing, bookkeeping, and acting on your feedback.
 
-The wiki is a living artifact with **five knowledge operations** — `compile`, `ingest`, `query`, `lint`, `audit`. Every session starts by reading `CLAUDE.md` and `wiki/index.md`.
+The wiki is a living artifact with **five knowledge operations** — `compile`, `ingest`, `query`, `lint`, `audit`. Every session starts by reading `README.md` and `wiki/index.md`.
 
 This all-in-one skill also packages the local web viewer under `viewer/`. When the user asks to deploy, install, launch, or repair the viewer, read `subskills/viewer-deploy.md` and prefer `scripts/deploy_viewer.py` for the filesystem, install, and launch workflow.
 
@@ -33,7 +33,7 @@ This all-in-one skill also packages the local web viewer under `viewer/`. When t
 
 ```
 <wiki-root>/
-├── CLAUDE.md          ← Schema: scope, conventions, current articles, gaps
+├── README.md          ← Schema: scope, conventions, current articles, gaps
 ├── log/               ← Per-day operation log (one file per day)
 │   ├── 20260409.md
 │   └── 20260410.md
@@ -54,7 +54,7 @@ This all-in-one skill also packages the local web viewer under `viewer/`. When t
     └── queries/       ← Query answers (promote durable ones to wiki/)
 ```
 
-`CLAUDE.md` is the **schema file** — the single most important configuration. It tells the LLM the wiki's scope, naming conventions, current article list, open questions, and research gaps. Read `references/schema-guide.md` for what to put in it. Read it at the start of every session.
+`README.md` is the **schema file** — the single most important configuration. It tells the LLM the wiki's scope, naming conventions, current article list, open questions, and research gaps. Read `references/schema-guide.md` for what to put in it. Read it at the start of every session.
 
 ## Core principles
 
@@ -142,7 +142,7 @@ Every action on the wiki is one of these five. Each appends an entry to the curr
 **When to run**: after a big ingest batch, when an existing page has outgrown 1200 words, when `index.md` no longer reflects reality, or when the user says "clean up the wiki".
 
 **Steps**:
-1. Read `CLAUDE.md`, `wiki/index.md`, and every file in the target subtree.
+1. Read `README.md`, `wiki/index.md`, and every file in the target subtree.
 2. For each page over ~1200 words: plan a split into `concepts/<topic>/` with an index + sub-pages. Confirm the plan with the user before writing.
 3. For each pair of near-duplicate pages: propose a merge. Confirm, then rewrite.
 4. Regenerate `wiki/index.md` so every page is listed exactly once.
@@ -209,7 +209,7 @@ Process human feedback from `audit/`.
    - **Accept**: apply the correction to the target file.
    - **Partially accept**: apply what makes sense, note the rest in the resolution.
    - **Reject**: explain why in the resolution — the feedback may be based on a misreading of scope or a contradictory source.
-   - **Defer**: add to `CLAUDE.md` "Open research questions" and leave the audit in place with a comment.
+   - **Defer**: add to `README.md` "Open research questions" and leave the audit in place with a comment.
 4. For applied audits, append a `# Resolution` section to the audit file:
    ```markdown
    # Resolution
@@ -262,10 +262,10 @@ The deploy helper copies `viewer/audit-shared/` and `viewer/web/` into the insta
 python3 scripts/scaffold.py <wiki-root> "<Topic Title>"
 ```
 
-Creates the full tree (including `log/<today>.md`, `audit/`, `audit/resolved/`), a blank `CLAUDE.md` based on the new template, and a blank `wiki/index.md` with the recommended category layout.
+Creates the full tree (including `log/<today>.md`, `audit/`, `audit/resolved/`), a blank `README.md` based on the new template, and a blank `wiki/index.md` with the recommended category layout.
 
 After scaffolding:
-1. Fill in `CLAUDE.md` — define scope, naming conventions, initial research questions.
+1. Fill in `README.md` — define scope, naming conventions, initial research questions.
 2. Start ingesting sources.
 3. Ask questions to build up `outputs/queries/`; promote durable answers.
 4. Run `lint` periodically.
@@ -306,7 +306,7 @@ The LLM rebuilds `index.md` on every compile and touches it on every ingest. For
 Rules:
 - Every wiki page must appear exactly once in `index.md`. `lint` enforces this.
 - Folder-split concepts show hierarchy via indented bullets.
-- `index.md` + `CLAUDE.md` together are what the AI reads at session start.
+- `index.md` + `README.md` together are what the AI reads at session start.
 
 ## `log/` format
 
@@ -327,7 +327,7 @@ Quick grep across history: `grep -rh "^## \[" log/ | tail -20`.
 
 ## References
 
-- `references/schema-guide.md` — What to put in `CLAUDE.md`
+- `references/schema-guide.md` — What to put in `README.md`
 - `references/article-guide.md` — How to write good wiki articles (length, wikilinks, mermaid, math, divide-and-conquer)
 - `references/log-guide.md` — The `log/` folder convention
 - `references/audit-guide.md` — Audit file format, anchor strategy, processing workflow

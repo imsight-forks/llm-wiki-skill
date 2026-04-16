@@ -235,7 +235,7 @@ When two sources contradict each other:
 
 1. State both claims explicitly.
 2. Note which source supports each claim.
-3. Add to the article's "Open questions" section **and** the wiki's `CLAUDE.md` research questions.
+3. Add to the article's "Open questions" section **and** the wiki's `README.md` research questions.
 4. Do NOT silently pick one — contradictions are valuable signal.
 
 Example:
