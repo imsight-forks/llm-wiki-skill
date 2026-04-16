@@ -1,6 +1,16 @@
 ---
 name: llm-wiki-all-in-one
-description: Build and maintain a Karpathy-style LLM knowledge base and deploy its bundled local web viewer. Use when: (1) scaffolding a new knowledge base for any research topic, (2) ingesting articles/papers/PDFs/web pages into raw/, (3) compiling or restructuring wiki articles from existing raw material, (4) answering questions against the wiki and filing durable answers back, (5) running lint passes for dead links / orphan pages / coverage gaps / audit shape, (6) processing human feedback from the audit/ directory and applying corrections, (7) deploying or launching the packaged web viewer against an existing LLM Wiki. Not for general note-taking, daily journals, or non-wiki Obsidian use.
+description: >-
+  Build and maintain a Karpathy-style LLM knowledge base and deploy its
+  bundled local web viewer. Use when (1) scaffolding a new knowledge base
+  for any research topic, (2) ingesting articles/papers/PDFs/web pages into
+  raw/, (3) compiling or restructuring wiki articles from existing raw
+  material, (4) answering questions against the wiki and filing durable
+  answers back, (5) running lint passes for dead links / orphan pages /
+  coverage gaps / audit shape, (6) processing human feedback from the audit/
+  directory and applying corrections, (7) deploying or launching the packaged
+  web viewer against an existing LLM Wiki. Not for general note-taking, daily
+  journals, or non-wiki Obsidian use.
 ---
 
 # LLM Wiki All-in-One — Karpathy Knowledge Base Pattern
