@@ -52,15 +52,15 @@ Commands (bind to hotkeys if you like):
 
 The plugin uses the shared `audit-shared` library, so files it writes are byte-identical in shape to files the web viewer writes.
 
-## Web viewer — `web/`
+## Web viewer — bundled deploy helper
 
-Local Node.js server that renders the wiki with mermaid, KaTeX, and wikilinks, and lets you file feedback from your browser.
+Local Node.js server that renders the wiki with mermaid, KaTeX, and wikilinks, and lets you file feedback from your browser. Deploy it from the all-in-one skill root:
 
 ```bash
-cd web
-npm install
-npm run build
-npm start -- --wiki "/path/to/wiki-root" --port 4175
+python3 scripts/deploy_viewer.py \
+  --install-dir "/path/to/viewer-install" \
+  --wiki "/path/to/wiki-root" \
+  --port 4175
 ```
 
 Then open `http://127.0.0.1:4175`. Features:

@@ -7,13 +7,16 @@ npm-debug.log*
 # TypeScript build output
 dist/
 *.tsbuildinfo
+llm-wiki-all-in-one/viewer/**/node_modules/
+llm-wiki-all-in-one/viewer/**/dist/
+llm-wiki-all-in-one/viewer/**/*.tsbuildinfo
+plugins/obsidian-audit/audit-shared/node_modules/
+plugins/obsidian-audit/audit-shared/dist/
+plugins/obsidian-audit/audit-shared/*.tsbuildinfo
 
 # Obsidian plugin build output
 plugins/obsidian-audit/main.js
 plugins/obsidian-audit/main.js.map
-
-# Web server build output
-web/dist/
 
 # OS
 .DS_Store

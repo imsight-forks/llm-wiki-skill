@@ -4,12 +4,15 @@
   "private": true,
   "description": "Obsidian plugin for the llm-wiki skill — select text → file an anchored audit comment.",
   "scripts": {
+    "build:audit-shared": "npm --prefix audit-shared run build",
+    "prebuild": "npm run build:audit-shared",
     "build": "node esbuild.config.mjs production",
+    "predev": "npm run build:audit-shared",
     "dev": "node esbuild.config.mjs",
     "link": "node ./scripts/link.mjs"
   },
   "dependencies": {
-    "audit-shared": "file:../../audit-shared",
+    "audit-shared": "file:./audit-shared",
     "js-yaml": "^4.1.0",
     "zod": "^3.23.8"
   },

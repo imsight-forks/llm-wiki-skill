@@ -52,11 +52,11 @@ The helper detects `node`, `npm`, and `bun`.
 The install/build order is always:
 
 ```bash
-cd audit-shared
+cd "<install-dir>/audit-shared"
 npm install --no-package-lock
 npm run build
 
-cd ../web
+cd "<install-dir>/web"
 npm install --no-package-lock
 npm run build
 ```
@@ -64,11 +64,11 @@ npm run build
 With bun fallback:
 
 ```bash
-cd audit-shared
+cd "<install-dir>/audit-shared"
 bun install
 bun run build
 
-cd ../web
+cd "<install-dir>/web"
 bun install
 bun run build
 ```
