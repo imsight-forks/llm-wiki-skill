@@ -8,7 +8,8 @@ Practical setup and usage notes for the LLM Wiki stack.
 
 1. **Attachment folder**: Settings → Files and links → "Attachment folder path" → `raw/assets/`.
 2. **New file location**: Settings → Files and links → "Default location for new notes" → `wiki/concepts/`.
-3. **Download attachments hotkey**: Settings → Hotkeys → search "Download attachments" → bind to `Ctrl+Shift+D`. After clipping an article, hit the hotkey to download all images locally.
+3. **New link format**: Settings → Files and links → "New link format" → absolute path in vault. `llm-wiki` canonical links use vault-root targets such as `[[wiki/concepts/foo|Foo]]`.
+4. **Download attachments hotkey**: Settings → Hotkeys → search "Download attachments" → bind to `Ctrl+Shift+D`. After clipping an article, hit the hotkey to download all images locally.
 
 ### Plugins to install
 
@@ -51,15 +52,15 @@ Commands (bind to hotkeys if you like):
 
 The plugin uses the shared `audit-shared` library, so files it writes are byte-identical in shape to files the web viewer writes.
 
-## Web viewer — `web/`
+## Web viewer — bundled deploy helper
 
-Local Node.js server that renders the wiki with mermaid, KaTeX, and wikilinks, and lets you file feedback from your browser.
+Local Node.js server that renders the wiki with mermaid, KaTeX, and wikilinks, and lets you file feedback from your browser. Deploy it from the all-in-one skill root:
 
 ```bash
-cd web
-npm install
-npm run build
-npm start -- --wiki "/path/to/wiki-root" --port 4175
+python3 scripts/deploy_viewer.py \
+  --install-dir "/path/to/viewer-install" \
+  --wiki "/path/to/wiki-root" \
+  --port 4175
 ```
 
 Then open `http://127.0.0.1:4175`. Features:
@@ -121,7 +122,7 @@ import matplotlib.pyplot as plt
 plt.savefig('outputs/charts/my-analysis.png')
 ```
 
-Embed in a wiki article: `![[my-analysis.png]]`.
+Embed in a wiki article: `![[outputs/charts/my-analysis.png]]`.
 
 ## Git workflow
 
@@ -141,4 +142,3 @@ Keep large files (PDFs >10 MB, raw images at full resolution, video, model weigh
 ## Interactive HTML outputs
 
 For complex analyses, the LLM can generate interactive HTML with JavaScript and save to `outputs/`. These can be opened in a browser or embedded in Obsidian with the HTML plugin.
-

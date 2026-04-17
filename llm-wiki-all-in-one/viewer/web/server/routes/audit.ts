@@ -88,8 +88,9 @@ export function handleAuditCreate(cfg: ServerConfig) {
         return;
       }
 
-      // Make sure the target file exists inside the wiki root.
-      const targetFull = path.join(cfg.wikiRoot, target);
+      // Make sure the target file exists inside the wiki root. Audit targets
+      // are vault-root-relative; .md suffixes are optional for markdown pages.
+      const targetFull = resolveVaultFile(cfg.wikiRoot, target);
       if (!fs.existsSync(targetFull) || !fs.statSync(targetFull).isFile()) {
         res.status(404).json({ error: "target file not found", target });
         return;
@@ -179,4 +180,16 @@ function replaceResolution(body: string, newBlock: string): string {
     return body.replace(re, `# Resolution\n\n${newBlock}`);
   }
   return `${body.trimEnd()}\n\n# Resolution\n\n${newBlock}`;
+}
+
+function resolveVaultFile(wikiRoot: string, target: string): string {
+  const candidates = [target];
+  if (!target.endsWith(".md")) candidates.push(`${target}.md`);
+  for (const rel of candidates) {
+    const full = path.join(wikiRoot, rel);
+    const relFromRoot = path.relative(wikiRoot, full);
+    if (relFromRoot.startsWith("..") || path.isAbsolute(relFromRoot)) continue;
+    if (fs.existsSync(full) && fs.statSync(full).isFile()) return full;
+  }
+  return path.join(wikiRoot, target);
 }

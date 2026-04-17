@@ -30,9 +30,8 @@ export function buildGraph(wikiRoot: string): GraphData {
 
   const files = collectMdFiles(wikiDir);
 
-  // Build a lookup table keyed by both the stem ("Transformers") and the
-  // relative-to-wiki path (e.g. "concepts/Transformers"), so wikilinks can
-  // resolve in either form.
+  // Build a lookup table keyed by canonical vault-root article paths plus
+  // legacy wiki-relative/stem forms. Only wiki/ files become graph nodes.
   const byKey: Map<string, string> = new Map(); // key → rel-from-wikiRoot path
   const nodes: Map<string, GraphNode> = new Map();
 
@@ -53,8 +52,11 @@ export function buildGraph(wikiRoot: string): GraphData {
       title,
     };
     nodes.set(id, node);
+    const withoutSuffix = id.replace(/\.md$/, "");
     byKey.set(stem, id);
     byKey.set(relFromWiki.replace(/\.md$/, ""), id);
+    byKey.set(withoutSuffix, id);
+    byKey.set(id, id);
     // Also index by basename without extension in lowercase as a last-resort alias
     byKey.set(stem.toLowerCase(), id);
   }
@@ -69,11 +71,10 @@ export function buildGraph(wikiRoot: string): GraphData {
     WIKILINK_RE.lastIndex = 0;
     let m: RegExpExecArray | null;
     while ((m = WIKILINK_RE.exec(text))) {
-      const target = m[1]!.trim();
+      const target = m[1]!.trim().replace(/\.md$/, "");
       if (target.startsWith("#")) continue; // anchor-only links — ignore
       const tgtId =
         byKey.get(target) ??
-        byKey.get(target.replace(/\.md$/, "")) ??
         byKey.get(target.toLowerCase());
       if (!tgtId || tgtId === srcId) continue;
 

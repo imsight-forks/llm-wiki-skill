@@ -1,22 +1,19 @@
 ---
-name: llm-wiki
+name: llm-wiki-all-in-one
 description: >-
-  Build and maintain a Karpathy-style LLM knowledge base — a self-compiling
-  Obsidian markdown wiki where an Agent ingests raw sources, compiles
-  cross-linked concept/entity/summary pages, answers queries against the
-  corpus, lints the graph for health, and audits in-context human feedback
-  filed from Obsidian or the local web viewer. Use when (1) scaffolding a
-  new knowledge base for any research topic, (2) ingesting
-  articles/papers/PDFs/web pages into raw/, (3) compiling or restructuring
-  wiki articles from existing raw material, (4) answering questions
-  against the wiki and filing durable answers back, (5) running lint
-  passes for dead links / orphan pages / coverage gaps / audit shape,
-  (6) processing human feedback from the audit/ directory and applying
-  corrections. Not for general note-taking, daily journals, or non-wiki
-  Obsidian use.
+  Build and maintain a Karpathy-style LLM knowledge base and deploy its
+  bundled local web viewer. Use when (1) scaffolding a new knowledge base
+  for any research topic, (2) ingesting articles/papers/PDFs/web pages into
+  raw/, (3) compiling or restructuring wiki articles from existing raw
+  material, (4) answering questions against the wiki and filing durable
+  answers back, (5) running lint passes for dead links / orphan pages /
+  coverage gaps / audit shape, (6) processing human feedback from the audit/
+  directory and applying corrections, (7) deploying or launching the packaged
+  web viewer against an existing LLM Wiki. Not for general note-taking, daily
+  journals, or non-wiki Obsidian use.
 ---
 
-# LLM Wiki — Karpathy Knowledge Base Pattern
+# LLM Wiki All-in-One — Karpathy Knowledge Base Pattern
 
 > **Experimental skill — iterating.**
 > Authored by Lewis Liu (lylewis@outlook.com) · Inspired by [Karpathy's llm-wiki Gist](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f)
@@ -28,13 +25,15 @@ Instead of RAG (re-retrieving raw docs on every query), the LLM **compiles** raw
 - **You** own: sourcing raw material, asking good questions, steering direction, filing feedback on anything the AI got wrong.
 - **LLM** owns: all writing, cross-referencing, filing, bookkeeping, and acting on your feedback.
 
-The wiki is a living artifact with **five operations** — `compile`, `ingest`, `query`, `lint`, `audit`. Every session starts by reading `CLAUDE.md` and `wiki/index.md`.
+The wiki is a living artifact with **five knowledge operations** — `compile`, `ingest`, `query`, `lint`, `audit`. Every session starts by reading `README.md` and `wiki/index.md`.
+
+This all-in-one skill also packages the local web viewer under `viewer/`. When the user asks to deploy, install, launch, or repair the viewer, read `subskills/viewer-deploy.md` and prefer `scripts/deploy_viewer.py` for the filesystem, install, and launch workflow.
 
 ## Directory layout
 
 ```
 <wiki-root>/
-├── CLAUDE.md          ← Schema: scope, conventions, current articles, gaps
+├── README.md          ← Schema: scope, conventions, current articles, gaps
 ├── log/               ← Per-day operation log (one file per day)
 │   ├── 20260409.md
 │   └── 20260410.md
@@ -55,7 +54,7 @@ The wiki is a living artifact with **five operations** — `compile`, `ingest`, 
     └── queries/       ← Query answers (promote durable ones to wiki/)
 ```
 
-`CLAUDE.md` is the **schema file** — the single most important configuration. It tells the LLM the wiki's scope, naming conventions, current article list, open questions, and research gaps. Read `references/schema-guide.md` for what to put in it. Read it at the start of every session.
+`README.md` is the **schema file** — the single most important configuration. It tells the LLM the wiki's scope, naming conventions, current article list, open questions, and research gaps. Read `references/schema-guide.md` for what to put in it. Read it at the start of every session.
 
 ## Core principles
 
@@ -69,6 +68,7 @@ A single concept page should **never** try to cover a complex topic end-to-end. 
 - Put a short index page at `wiki/concepts/<topic>/index.md` — definition, list of sub-pages, one-line summaries
 - Put each aspect in its own file: `wiki/concepts/<topic>/<aspect>.md`
 - In `wiki/index.md`, show the hierarchy via indented bullets
+- Wikilinks use vault-root targets with short aliases, for example `[[wiki/concepts/<topic>/index|<Topic>]]` and `[[wiki/concepts/<topic>/<aspect>|<Aspect>]]`.
 
 Example layout (from a real wiki):
 ```
@@ -142,7 +142,7 @@ Every action on the wiki is one of these five. Each appends an entry to the curr
 **When to run**: after a big ingest batch, when an existing page has outgrown 1200 words, when `index.md` no longer reflects reality, or when the user says "clean up the wiki".
 
 **Steps**:
-1. Read `CLAUDE.md`, `wiki/index.md`, and every file in the target subtree.
+1. Read `README.md`, `wiki/index.md`, and every file in the target subtree.
 2. For each page over ~1200 words: plan a split into `concepts/<topic>/` with an index + sub-pages. Confirm the plan with the user before writing.
 3. For each pair of near-duplicate pages: propose a merge. Confirm, then rewrite.
 4. Regenerate `wiki/index.md` so every page is listed exactly once.
@@ -162,8 +162,9 @@ Add a new source. **One source typically touches 5–15 wiki pages.**
 3. Create `wiki/summaries/<slug>.md` (200–400 words — key takeaways, not a rewrite; see `references/article-guide.md`).
 4. Create or update relevant concept pages in `wiki/concepts/`. Respect divide-and-conquer: if a concept page would exceed 1200 words, split instead of cramming.
 5. Create or update entity pages in `wiki/entities/` for any new people / tools / papers / organizations referenced.
-6. Update `wiki/index.md` so the new pages appear under the right category.
-7. Log: `## [HH:MM] ingest | <slug> — <one-line description> (touched N pages)`
+6. Do not create a `## Raw references` section by default. Only if the user explicitly says they want raw material references, add or update a `## Raw references` section on every touched wiki page with wikilinks to the related `raw/` materials, e.g. `[[raw/articles/<slug>|Raw article]]`, `[[raw/papers/<slug>|Raw paper]]`, or `[[raw/refs/<slug>|Raw reference]]`.
+7. Update `wiki/index.md` so the new pages appear under the right category.
+8. Log: `## [HH:MM] ingest | <slug> — <one-line description> (touched N pages)`
 
 ### 3. `query`
 
@@ -173,7 +174,7 @@ Answer a question **grounded in the wiki**, not general knowledge.
 1. Read `wiki/index.md`. Scan for relevant pages by category.
 2. Read the identified pages in full; follow one level of wikilinks.
 3. If the wiki doesn't have enough material, say so and suggest what to ingest next instead of making something up.
-4. Synthesize the answer, citing pages inline with `[[Page Name]]`.
+4. Synthesize the answer, citing pages inline with canonical links such as `[[wiki/concepts/page-slug|Page Name]]`.
 5. Save to `outputs/queries/<YYYY-MM-DD>-<question-slug>.md`.
 6. If the answer is durable (a comparison, analysis, or new synthesis) → promote a cleaned-up version to `wiki/concepts/`, add to `index.md`.
 7. Log: `## [HH:MM] query | <question-slug>` (and a separate `## [HH:MM] promote | ...` line if promoted).
@@ -194,6 +195,7 @@ The script reports:
 - **log/ shape** — stray files or wrong filenames in `log/`
 - **audit/ shape** — malformed YAML frontmatter in `audit/*.md`
 - **Audit target resolution** — every open audit's `target` file must exist
+- **Non-canonical wikilinks** — legacy `[[concepts/foo]]`-style links that should be rewritten to `[[wiki/concepts/foo|Foo]]`
 
 For each issue, propose a fix, confirm with the user, then apply. Log: `## [HH:MM] lint | <N> issues found, <M> fixed`.
 
@@ -208,7 +210,7 @@ Process human feedback from `audit/`.
    - **Accept**: apply the correction to the target file.
    - **Partially accept**: apply what makes sense, note the rest in the resolution.
    - **Reject**: explain why in the resolution — the feedback may be based on a misreading of scope or a contradictory source.
-   - **Defer**: add to `CLAUDE.md` "Open research questions" and leave the audit in place with a comment.
+   - **Defer**: add to `README.md` "Open research questions" and leave the audit in place with a comment.
 4. For applied audits, append a `# Resolution` section to the audit file:
    ```markdown
    # Resolution
@@ -233,8 +235,9 @@ See `references/audit-guide.md` for the full audit file format.
 | Tool | Purpose |
 |------|---------|
 | [Obsidian](https://obsidian.md) | IDE for browsing the wiki; graph view shows connections |
-| **`plugins/obsidian-audit/`** | Obsidian plugin — select text → add feedback → writes to `audit/` |
-| **`web/`** | Local Node.js server — preview the wiki with mermaid/math rendered; select → feedback → `audit/` |
+| **Obsidian audit plugin** | Optional companion outside this all-in-one package — select text → add feedback → writes to `audit/` |
+| **`viewer/web/`** | Packaged local Node.js server — preview the wiki with mermaid/math rendered; select → feedback → `audit/` |
+| **`scripts/deploy_viewer.py`** | Copy, install, and launch the packaged viewer against an existing wiki root |
 | `scripts/scaffold.py` | Bootstrap a new wiki directory tree |
 | `scripts/lint_wiki.py` | Seven-pass health check |
 | `scripts/audit_review.py` | Group open/resolved audits by target file |
@@ -242,16 +245,28 @@ See `references/audit-guide.md` for the full audit file format.
 
 The Obsidian plugin and the web viewer both write audit files in the **same format** with **the same anchor algorithm**, so feedback filed from either place can be resolved by either place.
 
+## Deploying the web viewer
+
+When the user asks to deploy or launch the viewer:
+
+1. Read `subskills/viewer-deploy.md`.
+2. Ask for the viewer installation directory if the user did not provide it.
+3. Ask for the target LLM Wiki root if it cannot be inferred safely.
+4. Ask for the viewer port if needed; default to `8080`.
+5. Run `python3 scripts/deploy_viewer.py --install-dir <dir> --wiki <wiki-root> --port <port>` unless there is a clear reason to perform the steps manually.
+
+The deploy helper copies `viewer/audit-shared/` and `viewer/web/` into the installation directory, excludes generated files from local Git tracking, installs dependencies with npm when available or bun as a fallback, and launches the server on `127.0.0.1`.
+
 ## Starting a new wiki
 
 ```bash
 python3 scripts/scaffold.py <wiki-root> "<Topic Title>"
 ```
 
-Creates the full tree (including `log/<today>.md`, `audit/`, `audit/resolved/`), a blank `CLAUDE.md` based on the new template, and a blank `wiki/index.md` with the recommended category layout.
+Creates the full tree (including `log/<today>.md`, `audit/`, `audit/resolved/`), a blank `README.md` based on the new template, and a blank `wiki/index.md` with the recommended category layout.
 
 After scaffolding:
-1. Fill in `CLAUDE.md` — define scope, naming conventions, initial research questions.
+1. Fill in `README.md` — define scope, naming conventions, initial research questions.
 2. Start ingesting sources.
 3. Ask questions to build up `outputs/queries/`; promote durable answers.
 4. Run `lint` periodically.
@@ -271,19 +286,19 @@ The LLM rebuilds `index.md` on every compile and touches it on every ingest. For
 
 ## Concepts
 ### <Category A>
-- [[concepts/Foo]] — one-line summary
-- [[concepts/Bar/index|Bar]] — (folder-split) one-line summary
-    - [[concepts/Bar/aspect-1]] — ...
-    - [[concepts/Bar/aspect-2]] — ...
+- [[wiki/concepts/foo|Foo]] — one-line summary
+- [[wiki/concepts/bar/index|Bar]] — (folder-split) one-line summary
+    - [[wiki/concepts/bar/aspect-1|Aspect 1]] — ...
+    - [[wiki/concepts/bar/aspect-2|Aspect 2]] — ...
 
 ### <Category B>
 - ...
 
 ## Entities
-- [[entities/Andrej Karpathy]] — AI researcher, author of the llm-wiki pattern
+- [[wiki/entities/andrej-karpathy|Andrej Karpathy]] — AI researcher, author of the llm-wiki pattern
 
 ## Summaries (chronological)
-- 2026-04-09 — [[summaries/llm-wiki-gist]] — Karpathy's original Gist
+- 2026-04-09 — [[wiki/summaries/llm-wiki-gist|llm-wiki gist]] — Karpathy's original Gist
 
 ## Open Questions
 - Q1: ...
@@ -292,7 +307,7 @@ The LLM rebuilds `index.md` on every compile and touches it on every ingest. For
 Rules:
 - Every wiki page must appear exactly once in `index.md`. `lint` enforces this.
 - Folder-split concepts show hierarchy via indented bullets.
-- `index.md` + `CLAUDE.md` together are what the AI reads at session start.
+- `index.md` + `README.md` together are what the AI reads at session start.
 
 ## `log/` format
 
@@ -313,9 +328,9 @@ Quick grep across history: `grep -rh "^## \[" log/ | tail -20`.
 
 ## References
 
-- `references/schema-guide.md` — What to put in `CLAUDE.md`
+- `references/schema-guide.md` — What to put in `README.md`
 - `references/article-guide.md` — How to write good wiki articles (length, wikilinks, mermaid, math, divide-and-conquer)
 - `references/log-guide.md` — The `log/` folder convention
 - `references/audit-guide.md` — Audit file format, anchor strategy, processing workflow
 - `references/tooling-tips.md` — Obsidian setup, Web Clipper, qmd, plugin + web installation
-
+- `references/vault-root-link-resolver.md` — Canonical wikilink resolver contract and compatibility cases

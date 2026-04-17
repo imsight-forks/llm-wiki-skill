@@ -10,7 +10,7 @@ Example:
 
 Creates:
     <wiki-root>/
-    ├── CLAUDE.md          (schema template)
+    ├── README.md          (schema template)
     ├── log/
     │   └── YYYYMMDD.md    (first day's log with scaffold entry)
     ├── audit/
@@ -64,8 +64,8 @@ def scaffold(root: str, title: str) -> None:
     _write(root, "audit/.gitkeep", "")
     _write(root, "audit/resolved/.gitkeep", "")
 
-    # CLAUDE.md
-    claude_md = f"""# {title} Knowledge Base
+    # README.md
+    readme_md = f"""# {title} Knowledge Base
 
 > Schema document — read at the start of every session together with `wiki/index.md`.
 > Update after every major compile, ingest batch, or structural change.
@@ -89,6 +89,7 @@ Every operation appends an entry to `log/YYYYMMDD.md`.
 - **Folder-split concepts** (`wiki/concepts/<topic>/`): used when a topic exceeds ~1200 words. Contains `index.md` + one file per aspect.
 - **Entity pages** (`wiki/entities/`): Proper names.
 - **Summary pages** (`wiki/summaries/`): kebab-case source slug.
+- **Wikilinks**: use vault-root targets with short aliases, e.g. `[[wiki/concepts/page-slug|Page Title]]`.
 
 All pages require YAML frontmatter: `title`, `type`, `created`, `updated`, `sources`, `tags`.
 
@@ -99,6 +100,7 @@ All pages require YAML frontmatter: `title`, `type`, `created`, `updated`, `sour
 ### Raw file policy
 - Small text sources → copy into `raw/<subfolder>/`.
 - Large binaries → create a pointer file at `raw/refs/<slug>.md` with `kind: ref` and `external_path` fields. Do not copy the binary.
+- Do not create a `## Raw references` section by default. Only if the user explicitly says they want raw material references, each touched wiki page gets a `## Raw references` section with wikilinks to the related raw materials, such as `[[raw/articles/<slug>|Raw article]]`, `[[raw/papers/<slug>|Raw paper]]`, or `[[raw/refs/<slug>|Raw reference]]`.
 
 ## Current articles
 
@@ -134,15 +136,15 @@ Sources to ingest:
 - Depth: <survey-level | deep technical>
 - Handling contradictions: state both, cite each, add to Open Research Questions.
 """
-    _write(root, "CLAUDE.md", claude_md)
-    print("✓ Created CLAUDE.md")
+    _write(root, "README.md", readme_md)
+    print("✓ Created README.md")
 
     # log/<today>.md
     log_md = f"""# {today_iso}
 
 ## [{now_hm}] scaffold | Initialized {title} knowledge base
 - Created directory tree (raw/, wiki/, log/, audit/, outputs/)
-- Created CLAUDE.md schema template
+- Created README.md schema template
 - Created wiki/index.md category skeleton
 """
     _write(root, f"log/{today_compact}.md", log_md)
@@ -179,7 +181,7 @@ Sources to ingest:
 ✅ Wiki scaffolded at: {root}/
 
 Next steps:
-  1. Fill in CLAUDE.md — define scope and naming conventions
+  1. Fill in README.md — define scope and naming conventions
   2. Add sources to raw/ (use Obsidian Web Clipper for web articles)
   3. Run ingest: tell your LLM agent "ingest raw/<file>.md"
   4. Ask questions: "what does the wiki say about X?"
@@ -200,4 +202,3 @@ if __name__ == "__main__":
         print(__doc__)
         sys.exit(1)
     scaffold(sys.argv[1], sys.argv[2])
-

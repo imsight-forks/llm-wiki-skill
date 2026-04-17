@@ -42,10 +42,9 @@ export function createRenderer(opts: RendererOptions) {
   });
 
   const resolver: WikilinkResolver = (target) => {
-    // Try a few resolutions: exact relative path, match by stem under wiki/.
     const candidate = findPage(opts.wikiRoot, target);
     if (candidate) {
-      const rel = path.relative(opts.wikiRoot, candidate).split(path.sep).join("/");
+      const rel = canonicalTarget(opts.wikiRoot, candidate);
       return {
         href: `/?page=${encodeURIComponent(rel)}`,
         exists: true,
@@ -131,27 +130,44 @@ function stripFrontmatter(text: string): {
 }
 
 /**
- * Resolve a wikilink target to a file under wikiRoot. Tries:
- *   - the exact relative path as given
- *   - that path + ".md"
- *   - a search for any md file whose stem === target
- *   - a search for any md file whose basename === target
+ * Resolve a wikilink target to a file under wikiRoot. Vault-root paths are
+ * primary. Legacy wiki-relative article links such as concepts/foo still work.
  */
 export function findPage(wikiRoot: string, target: string): string | null {
+  const normalized = safeTarget(target);
+  if (!normalized) return null;
+
   const tryPath = (rel: string): string | null => {
     const full = path.join(wikiRoot, rel);
     if (fs.existsSync(full) && fs.statSync(full).isFile()) return full;
     return null;
   };
 
-  const direct = tryPath(target) || tryPath(target + ".md");
+  const direct =
+    tryPath(normalized) ||
+    tryPath(normalized + ".md") ||
+    tryPath(path.posix.join("wiki", normalized)) ||
+    tryPath(path.posix.join("wiki", normalized + ".md"));
   if (direct) return direct;
 
   // Fallback: scan wiki/ for matching stem.
   const wikiDir = path.join(wikiRoot, "wiki");
   if (!fs.existsSync(wikiDir)) return null;
-  const match = findByStem(wikiDir, target);
+  const match = findByStem(wikiDir, normalized);
   return match;
+}
+
+function canonicalTarget(wikiRoot: string, filePath: string): string {
+  let rel = path.relative(wikiRoot, filePath).split(path.sep).join("/");
+  if (rel.endsWith(".md")) rel = rel.slice(0, -3);
+  return rel;
+}
+
+function safeTarget(input: string): string | null {
+  if (!input || path.isAbsolute(input)) return null;
+  const normalized = path.posix.normalize(input).replace(/^\/+/, "");
+  if (normalized === "." || normalized.startsWith("../") || normalized === "..") return null;
+  return normalized;
 }
 
 function findByStem(dir: string, target: string): string | null {

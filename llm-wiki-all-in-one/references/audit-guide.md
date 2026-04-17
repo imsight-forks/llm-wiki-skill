@@ -90,7 +90,7 @@ On read (AI during `audit`, audit_review.py, both tools):
 3. If multiple matches, use `anchor_before + anchor_text + anchor_after` as a combined search key.
 4. If still no match, the anchor is **stale** — flag to the user during the `audit` op. Do not silently drop; ask whether to re-anchor, reject, or archive.
 
-This algorithm lives in `audit-shared/src/anchor.ts` and is the single source of truth for all tools.
+This algorithm lives in the packaged `audit-shared/src/anchor.ts` library copies and is the single source of truth for all tools.
 
 ## Processing workflow (the `audit` op)
 
@@ -105,7 +105,7 @@ See `SKILL.md` → "The five operations" → `audit` for the canonical version. 
    - Flip `status: open` → `status: resolved` in the frontmatter.
    - Move the file to `audit/resolved/`.
    - Append a `## [HH:MM] audit | resolved <id> — <one-liner>` entry to `log/YYYYMMDD.md`.
-3. If an audit is deferred (e.g., unresolvable contradiction), leave the file in `audit/` and add the question to `CLAUDE.md` "Open research questions" with a reference to the audit id.
+3. If an audit is deferred (e.g., unresolvable contradiction), leave the file in `audit/` and add the question to `README.md` "Open research questions" with a reference to the audit id.
 
 ## Resolution section format
 
@@ -124,13 +124,12 @@ Fields:
 - Which files were touched (for non-trivial edits).
 - Pointer to the log entry.
 
-For `rejected` audits: explain **why** — most often "out of scope per CLAUDE.md" or "contradicts more authoritative source X". Rejected audits still move to `resolved/` so they're not processed again, but they remain visible in case the scope changes.
+For `rejected` audits: explain **why** — most often "out of scope per README.md" or "contradicts more authoritative source X". Rejected audits still move to `resolved/` so they're not processed again, but they remain visible in case the scope changes.
 
 ## Tooling
 
 - **`scripts/lint_wiki.py`** validates audit file shape and that every `target` file exists.
 - **`scripts/audit_review.py`** lists and groups audits.
 - **`plugins/obsidian-audit/`** writes audit files from inside Obsidian on selection.
-- **`web/`** writes audit files from the local web viewer on selection.
-- **`audit-shared/`** — TypeScript library implementing the schema, anchor algorithm, id generator, and YAML (de)serialization used by the plugin and the web server.
-
+- **`viewer/web/`** writes audit files from the local web viewer on selection after deployment.
+- **`viewer/audit-shared/`** and **`plugins/obsidian-audit/audit-shared/`** — duplicated TypeScript library copies implementing the schema, anchor algorithm, id generator, and YAML (de)serialization used by the plugin and the web server.

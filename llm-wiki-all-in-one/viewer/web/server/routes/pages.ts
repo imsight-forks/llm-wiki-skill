@@ -15,14 +15,7 @@ export function handlePage(cfg: ServerConfig) {
       return;
     }
 
-    // Default to wiki/index.md if a directory is requested.
-    let full = path.join(cfg.wikiRoot, rel);
-    if (fs.existsSync(full) && fs.statSync(full).isDirectory()) {
-      full = path.join(full, "index.md");
-    }
-
-    if (!full.endsWith(".md")) full += ".md";
-
+    const full = resolveMarkdownFile(cfg.wikiRoot, rel);
     if (!fs.existsSync(full) || !fs.statSync(full).isFile()) {
       res.status(404).json({ error: "file not found", path: rel });
       return;
@@ -71,4 +64,23 @@ function safeRel(input: string): string | null {
   const normalized = path.posix.normalize(input);
   if (normalized.startsWith("..")) return null;
   return normalized;
+}
+
+function resolveMarkdownFile(wikiRoot: string, rel: string): string {
+  // Vault-root paths are canonical. The wiki/<rel> fallback preserves older
+  // article links such as ?path=concepts/foo during migration.
+  for (const candidate of [rel, path.posix.join("wiki", rel)]) {
+    let full = path.join(wikiRoot, candidate);
+    if (fs.existsSync(full) && fs.statSync(full).isDirectory()) {
+      full = path.join(full, "index.md");
+    }
+    if (!full.endsWith(".md")) full += ".md";
+    if (fs.existsSync(full) && fs.statSync(full).isFile()) {
+      return full;
+    }
+  }
+
+  let fallback = path.join(wikiRoot, rel);
+  if (!fallback.endsWith(".md")) fallback += ".md";
+  return fallback;
 }
