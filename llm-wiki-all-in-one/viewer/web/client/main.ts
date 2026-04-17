@@ -2,8 +2,7 @@ import mermaid from "mermaid";
 import type { AuditEntry } from "audit-shared";
 import { renderTree } from "./tree.js";
 import { installFeedbackUI } from "./feedback.js";
-import { renderGraph, type GraphData, type GraphNode } from "./graph.js";
-import { ParticleField } from "./particles.js";
+import { installSearchUI } from "./search.js";
 
 interface PageResponse {
   path: string;
@@ -17,7 +16,6 @@ const state = {
   currentPath: "wiki/index.md" as string,
   rawMarkdown: "" as string,
   author: "me" as string,
-  graphTeardown: null as (() => void) | null,
 };
 
 // ── Mermaid with Catppuccin Mocha palette ──────────────────────────────────
@@ -80,8 +78,14 @@ async function main() {
   // Tree.
   const tree = await fetch("/api/tree").then((r) => r.json());
   renderTree(document.getElementById("tree")!, tree, (path) => {
-    void loadPage(path);
-    history.pushState({ page: path }, "", `/?page=${encodeURIComponent(path)}`);
+    navigateToPage(path);
+  });
+
+  installSearchUI({
+    getCurrentPath: () => state.currentPath,
+    onSelect: (path) => {
+      navigateToPage(path);
+    },
   });
 
   // Initial page.
@@ -102,69 +106,13 @@ async function main() {
     const page = u.searchParams.get("page");
     if (page) {
       e.preventDefault();
-      void loadPage(page);
-      history.pushState({ page }, "", `/?page=${encodeURIComponent(page)}`);
+      navigateToPage(page);
     }
   });
 
   // Refresh audits button.
   document.getElementById("btn-refresh")!.addEventListener("click", () => {
     void loadAudits(state.currentPath);
-  });
-
-  // Graph toggle.
-  const graphOverlay = document.getElementById("graph-overlay")!;
-  const openGraph = async () => {
-    graphOverlay.classList.remove("hidden");
-    // Let layout settle so canvas/svg get their sizes.
-    await new Promise((r) => requestAnimationFrame(() => r(null)));
-
-    const data = (await fetch("/api/graph").then((r) => r.json())) as GraphData;
-    const svg = document.getElementById("graph-svg") as unknown as SVGSVGElement;
-    const canvas = document.getElementById("graph-particles") as HTMLCanvasElement;
-
-    if (state.graphTeardown) state.graphTeardown();
-
-    const particles = new ParticleField(canvas, 95);
-    particles.start();
-
-    const teardownGraph = renderGraph(svg, data, {
-      onNodeClick: (node: GraphNode) => {
-        closeGraph();
-        void loadPage(node.path);
-        history.pushState({ page: node.path }, "", `/?page=${encodeURIComponent(node.path)}`);
-      },
-    });
-
-    state.graphTeardown = () => {
-      particles.stop();
-      teardownGraph();
-    };
-  };
-  const closeGraph = () => {
-    graphOverlay.classList.add("hidden");
-    if (state.graphTeardown) {
-      state.graphTeardown();
-      state.graphTeardown = null;
-    }
-  };
-  document.getElementById("btn-graph")!.addEventListener("click", () => {
-    if (graphOverlay.classList.contains("hidden")) void openGraph();
-    else closeGraph();
-  });
-  document.getElementById("graph-close")!.addEventListener("click", closeGraph);
-  document.getElementById("graph-reset")!.addEventListener("click", () => {
-    void openGraph();
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && !graphOverlay.classList.contains("hidden")) {
-      closeGraph();
-    }
-    if ((e.key === "g" || e.key === "G") && !isEditableFocused()) {
-      e.preventDefault();
-      if (graphOverlay.classList.contains("hidden")) void openGraph();
-      else closeGraph();
-    }
   });
 
   // Feedback UI.
@@ -176,11 +124,13 @@ async function main() {
   });
 }
 
-function isEditableFocused(): boolean {
-  const el = document.activeElement;
-  if (!el) return false;
-  const tag = el.tagName;
-  return tag === "INPUT" || tag === "TEXTAREA" || (el as HTMLElement).isContentEditable;
+function navigateToPage(path: string): void {
+  if (path !== state.currentPath) {
+    void loadPage(path);
+    history.pushState({ page: path }, "", `/?page=${encodeURIComponent(path)}`);
+    return;
+  }
+  history.replaceState({ page: path }, "", `/?page=${encodeURIComponent(path)}`);
 }
 
 async function loadPage(pathArg: string): Promise<void> {

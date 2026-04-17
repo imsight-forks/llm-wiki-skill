@@ -88,7 +88,7 @@ llm-wiki-skill/
 
 ## Deploy The Web Viewer
 
-The local web viewer renders the wiki with Mermaid, KaTeX, and wikilinks. It can file feedback from selected browser text into the wiki's `audit/` directory.
+The local web viewer renders the wiki with Mermaid, KaTeX, wikilinks, and local quick search. It can file feedback from selected browser text into the wiki's `audit/` directory. Press `Ctrl+K` or `/` in the viewer to search titles, headings, article text, paths, and wikilink aliases.
 
 Use the deploy helper from the all-in-one skill:
 

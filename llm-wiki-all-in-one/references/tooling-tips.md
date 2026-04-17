@@ -65,6 +65,7 @@ python3 scripts/deploy_viewer.py \
 
 Then open `http://127.0.0.1:4175`. Features:
 - Left sidebar: navigation tree built from `wiki/index.md`.
+- Top bar: quick search with `Ctrl+K` or `/`, covering page titles, headings, article text, paths, and wikilink aliases.
 - Main pane: rendered markdown, mermaid diagrams rendered client-side, formulas rendered server-side.
 - Right sidebar: list of open audits for the current page.
 - Select any text → "💬 Add feedback" popover appears → submit → writes an audit file to `<wiki-root>/audit/`.

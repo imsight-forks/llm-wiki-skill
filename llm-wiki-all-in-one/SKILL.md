@@ -236,7 +236,7 @@ See `references/audit-guide.md` for the full audit file format.
 |------|---------|
 | [Obsidian](https://obsidian.md) | IDE for browsing the wiki; graph view shows connections |
 | **Obsidian audit plugin** | Optional companion outside this all-in-one package — select text → add feedback → writes to `audit/` |
-| **`viewer/web/`** | Packaged local Node.js server — preview the wiki with mermaid/math rendered; select → feedback → `audit/` |
+| **`viewer/web/`** | Packaged local Node.js server — preview the wiki with mermaid/math rendered; quick-search with `Ctrl+K` or `/`; select → feedback → `audit/` |
 | **`scripts/deploy_viewer.py`** | Copy, install, and launch the packaged viewer against an existing wiki root |
 | `scripts/scaffold.py` | Bootstrap a new wiki directory tree |
 | `scripts/lint_wiki.py` | Seven-pass health check |

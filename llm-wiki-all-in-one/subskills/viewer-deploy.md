@@ -61,6 +61,8 @@ npm install --no-package-lock
 npm run build
 ```
 
+The viewer package intentionally installs with `--no-package-lock`; packaged lockfiles are excluded from deployed viewer source. New runtime dependencies should be declared in the relevant `package.json` and resolved during this install step.
+
 With bun fallback:
 
 ```bash
